@@ -1,0 +1,29 @@
+[tools]
+node = "24.14.0"
+
+[tasks.bump-pnpm]
+description = "Bump the pnpm version in package.json to the latest version"
+run = [
+  "pnpm pkg delete packageManager",
+  "pnpm pkg set packageManager=pnpm@$(pnpm -v)",
+]
+
+[tasks.build]
+description = "Build the project"
+run = ["pnpm run build"]
+
+[tasks.dev]
+description = "Run the development server"
+run = ["pnpm run dev"]
+
+[tasks.lint]
+description = "Run the linter"
+run = ["pnpm run lint"]
+
+[tasks.format]
+description = "Format the code"
+run = ["pnpm run format"]
+
+[tasks.test]
+description = "Run the tests"
+run = ["pnpm run test"]
