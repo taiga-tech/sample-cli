@@ -1,0 +1,1 @@
+/Users/Taiga/taiga-tech/dev/projects/cli/takt-worktrees/20260227T1629-implement-rust-cli-npm-dist/target/release/sample-cli: /Users/Taiga/taiga-tech/dev/projects/cli/takt-worktrees/20260227T1629-implement-rust-cli-npm-dist/crates/cli/src/main.rs /Users/Taiga/taiga-tech/dev/projects/cli/takt-worktrees/20260227T1629-implement-rust-cli-npm-dist/crates/core/src/lib.rs

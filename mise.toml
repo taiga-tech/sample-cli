@@ -1,5 +1,6 @@
 [tools]
 node = "24.14.0"
+rust = "latest"
 
 [tasks.bump-pnpm]
 description = "Bump the pnpm version in package.json to the latest version"
