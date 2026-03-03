@@ -1,6 +1,6 @@
 [tools]
 node = "24.14.0"
-rust = "latest"
+rust = "1.93.1"
 
 [tasks.bump-pnpm]
 description = "Bump the pnpm version in package.json to the latest version"
@@ -19,12 +19,24 @@ run = ["pnpm run dev"]
 
 [tasks.lint]
 description = "Run the linter"
-run = ["pnpm run lint"]
+run = [
+  "pnpm run lint",
+  "cargo clippy --all-targets --all-features -- -D warnings",
+  "mise fmt-check",
+]
+
+[tasks.fmt-check]
+description = "Check code formatting without modifying files"
+run = "cargo fmt --check"
 
 [tasks.format]
 description = "Format the code"
-run = ["pnpm run format"]
+run = ["pnpm run format", "cargo fmt --all"]
 
 [tasks.test]
 description = "Run the tests"
 run = ["pnpm run test"]
+
+[tasks.fix]
+description = "Auto-fix clippy warnings where possible"
+run = "cargo clippy --all-targets --all-features --fix --allow-dirty"

@@ -80,3 +80,24 @@ public/workbox-*
 # VSCode
 # =============================
 !.vscode
+
+# =============================
+# takt
+# =============================
+.takt/*
+!.takt/config.yaml
+
+# Facets and pieces (version-controlled)
+!.takt/pieces/
+!.takt/pieces/**
+!.takt/personas/
+!.takt/personas/**
+!.takt/policies/
+!.takt/policies/**
+!.takt/knowledge/
+!.takt/knowledge/**
+!.takt/instructions/
+!.takt/instructions/**
+!.takt/output-contracts/
+!.takt/output-contracts/**
+.takt/.runtime
