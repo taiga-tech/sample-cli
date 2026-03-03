@@ -10,17 +10,18 @@
     ],
     "scripts": {
         "build": "tsup",
-        "test": "vitest run"
+        "test": "vitest run",
+        "dev": "node dist/index.cjs"
     },
     "dependencies": {
         "detect-libc": "^2.0.4"
     },
     "optionalDependencies": {
-        "@taiga-tech/cli-darwin-arm64": "0.1.0",
-        "@taiga-tech/cli-darwin-x64": "0.1.0",
-        "@taiga-tech/cli-win32-x64": "0.1.0",
-        "@taiga-tech/cli-linux-x64-gnu": "0.1.0",
-        "@taiga-tech/cli-linux-x64-musl": "0.1.0"
+        "@taiga-tech/cli-darwin-arm64": "workspace:*",
+        "@taiga-tech/cli-darwin-x64": "workspace:*",
+        "@taiga-tech/cli-win32-x64": "workspace:*",
+        "@taiga-tech/cli-linux-x64-gnu": "workspace:*",
+        "@taiga-tech/cli-linux-x64-musl": "workspace:*"
     },
     "devDependencies": {
         "@types/node": "^24.0.0",

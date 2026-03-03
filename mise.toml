@@ -10,8 +10,11 @@ run = [
 ]
 
 [tasks.build]
-description = "Build the project"
-run = ["pnpm run build"]
+description = "Build JS packages and Rust workspace"
+run = [
+  "pnpm run build",
+  "cargo build --workspace",
+]
 
 [tasks.dev]
 description = "Run the development server"
@@ -34,9 +37,52 @@ description = "Format the code"
 run = ["pnpm run format", "cargo fmt --all"]
 
 [tasks.test]
-description = "Run the tests"
-run = ["pnpm run test"]
+description = "Run JS and Rust tests"
+run = [
+  "pnpm --filter @taiga-tech/cli run test",
+  "cargo test --workspace",
+]
 
 [tasks.fix]
 description = "Auto-fix clippy warnings where possible"
 run = "cargo clippy --all-targets --all-features --fix --allow-dirty"
+
+[tasks.check]
+description = "Run lint, type checks, and tests"
+run = [
+  "mise run lint",
+  "pnpm run check-types",
+  "mise run test",
+]
+
+[tasks.cli-binary]
+description = "Build and place host-target binary in vendor/ with CI-compatible paths"
+run = "scripts/place-binary-like-ci.sh --build"
+
+[tasks.cli-binary-target]
+description = "Build and place binary for TARGET=<rust-target-triple>"
+run = "scripts/place-binary-like-ci.sh --target \"${TARGET:?set TARGET to a rust target triple}\" --build"
+
+[tasks.cli-launcher-build]
+description = "Build the Node launcher package"
+run = "pnpm --filter @taiga-tech/cli run build"
+
+[tasks.cli-launcher-run]
+description = "Run the launcher (expects binary already placed)"
+run = "node packages/cli/dist/index.cjs"
+
+[tasks.cli]
+description = "CI-like local CLI flow (host target): place binary, build launcher, run"
+run = [
+  "mise run cli-binary",
+  "mise run cli-launcher-build",
+  "mise run cli-launcher-run",
+]
+
+[tasks.cli-target]
+description = "CI-like local CLI flow for TARGET=<rust-target-triple>"
+run = [
+  "mise run cli-binary-target",
+  "mise run cli-launcher-build",
+  "mise run cli-launcher-run",
+]
