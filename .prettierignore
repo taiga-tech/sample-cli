@@ -1,6 +1,6 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
+# =============================
+# Dependencies
+# =============================
 node_modules
 .pnp
 .pnp.*
@@ -10,59 +10,95 @@ node_modules
 !.yarn/releases
 !.yarn/sdks
 !.yarn/versions
+yarn.lock
+package-lock.json
+pnpm-lock.yaml
+flow-typed
 
-# testing
-coverage
-
-# next.js
+# =============================
+# Build / Production Outputs
+# =============================
 .next/
 out/
-
-# production
+build
+dist
 /build
+storybook-static/
+analyze/
+.contentlayer
+.turbo
 
-# misc
-.DS_Store
-*.pem
+# =============================
+# Cache
+# =============================
+.cache/*
+*.tsbuildinfo
 
-# debug
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# =============================
+# Testing / Coverage
+# =============================
+coverage
 
-# local env files
+# =============================
+# Environment Variables
+# =============================
+.env
 .env.local
 .env.development.local
 .env.test.local
 .env.production.local
 
-# vercel
+# =============================
+# Vercel
+# =============================
 .vercel
 
-# vscode
-!.vscode
+# =============================
+# Debug Logs
+# =============================
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# typescript
-*.tsbuildinfo
+# =============================
+# Misc
+# =============================
+.DS_Store
+*.pem
 
-# cache file
-.cache/*
+# =============================
+# Rust
+# =============================
+target
 
-# package.json
-package-lock.json
-yarn.lock
-
-flow-typed
-
-.yarn/
-
+# =============================
+# Service Worker
+# =============================
 public/sw.js
 public/workbox-*
 
-**/**.svg
+# =============================
+# VSCode
+# =============================
+!.vscode
 
-storybook-static/
-analyze/
+# =============================
+# takt
+# =============================
+.takt/*
+!.takt/config.yaml
 
-.contentlayer
-.turbo
+# Facets and pieces (version-controlled)
+!.takt/pieces/
+!.takt/pieces/**
+!.takt/personas/
+!.takt/personas/**
+!.takt/policies/
+!.takt/policies/**
+!.takt/knowledge/
+!.takt/knowledge/**
+!.takt/instructions/
+!.takt/instructions/**
+!.takt/output-contracts/
+!.takt/output-contracts/**
+.takt/.runtime
