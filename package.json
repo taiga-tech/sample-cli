@@ -5,7 +5,7 @@
         "build": "turbo run build",
         "dev": "turbo run dev",
         "lint": "turbo run lint",
-        "format": "prettier --write \"**/*.{js,mjs,jsx,json,ts,tsx,md,mdx,css,html,yml,yaml,scss,sass}\" --ignore-path .prettierignore",
+        "format": "prettier --write \"**/*.{js,mjs,jsx,json,ts,tsx,md,mdx,css,html,yml,yaml,scss,sass}\" --ignore-path .gitignore",
         "check-types": "turbo run check-types"
     },
     "devDependencies": {
