@@ -92,4 +92,22 @@ describe('resolveTargetTriple', () => {
             'x86_64-unknown-linux-musl'
         )
     })
+
+    it('未対応 platform → "Unsupported platform: ..." をスロー', () => {
+        expect(() => resolveTargetTriple('freebsd', 'x64', false)).toThrow(
+            'Unsupported platform: freebsd'
+        )
+    })
+
+    it('未対応 arch → "Unsupported arch: ..." をスロー', () => {
+        expect(() => resolveTargetTriple('linux', 'arm64', false)).toThrow(
+            'Unsupported arch: linux/arm64'
+        )
+    })
+
+    it('darwin では isGlibc フラグを無視して arm64 triple を返す', () => {
+        expect(resolveTargetTriple('darwin', 'arm64', true)).toBe(
+            'aarch64-apple-darwin'
+        )
+    })
 })

@@ -1,5 +1,6 @@
 [tools]
 node = "24.14.0"
+pnpm = "10.30.3"
 rust = "1.93.1"
 
 [tasks.bump-pnpm]
@@ -42,6 +43,29 @@ run = [
   "pnpm --filter @taiga-tech/cli run test",
   "cargo test --workspace",
 ]
+
+[tasks.test-coverage-js]
+description = "Run JS test coverage (Vitest)"
+run = "pnpm --filter @taiga-tech/cli run test:coverage"
+
+[tasks.test-coverage-rust]
+description = "Run Rust test coverage with cargo-llvm-cov"
+run = [
+  "cargo llvm-cov --version || cargo install cargo-llvm-cov --locked",
+  "rustup component add llvm-tools-preview",
+  "cargo llvm-cov --workspace --lcov --summary-only --output-path target/rust.lcov --fail-under-functions 100 --fail-under-lines 100 --fail-under-regions 100",
+]
+
+[tasks.test-coverage]
+description = "Run JS and Rust test coverage"
+run = [
+  "mise run test-coverage-js",
+  "mise run test-coverage-rust",
+]
+
+[tasks.coverage]
+description = "Alias of test-coverage"
+run = "mise run test-coverage"
 
 [tasks.fix]
 description = "Auto-fix clippy warnings where possible"
