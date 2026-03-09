@@ -1,9 +1,7 @@
 name: Release
 
 on:
-  push:
-    tags:
-      - 'v*'
+  workflow_call:
 
 jobs:
   build:
@@ -31,10 +29,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Install Rust toolchain
-        uses: dtolnay/rust-toolchain@stable
-        with:
-          targets: ${{ matrix.target }}
+      - uses: jdx/mise-action@v3
+
+      - name: Add Rust target
+        run: rustup target add ${{ matrix.target }}
 
       - name: Install musl tools (musl target only)
         if: matrix.target == 'x86_64-unknown-linux-musl'
@@ -72,12 +70,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - uses: pnpm/action-setup@v4
-
-      - uses: actions/setup-node@v4
-        with:
-          node-version: '24'
-          registry-url: 'https://registry.npmjs.org'
+      - uses: jdx/mise-action@v3
 
       - name: Download all artifacts
         uses: actions/download-artifact@v4
@@ -94,10 +87,17 @@ jobs:
           cp -r binary-x86_64-unknown-linux-musl/. packages/cli-linux-x64-musl/vendor/x86_64-unknown-linux-musl/sample-cli/
 
       - name: Install dependencies
-        run: pnpm install
+        run: pnpm install --frozen-lockfile
 
       - name: Build launcher
         run: pnpm --filter @taiga-tech/cli build
+
+      - name: Configure npm auth
+        run: |
+          printf "//registry.npmjs.org/:_authToken=%s\n" "$NODE_AUTH_TOKEN" > ~/.npmrc
+          printf "registry=https://registry.npmjs.org/\n" >> ~/.npmrc
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
 
       # Publish platform packages first, then the launcher (order is required)
       - name: Publish platform packages
