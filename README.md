@@ -1,135 +1,119 @@
-# Turborepo starter
+# sample-cli
 
-This Turborepo starter is maintained by the Turborepo core team.
+Rust 製ネイティブ CLI を npm で配布するためのモノレポです。
+`@taiga-tech/cli`（TypeScript ランチャ）が実行環境を判定し、対応するプラットフォーム別パッケージに同梱されたネイティブバイナリを起動します。
 
-## Using this example
+## 構成概要
 
-Run the following command:
+- `crates/core`: Rust コアライブラリ
+- `crates/cli`: Rust バイナリ本体（`sample-cli`）
+- `packages/cli`: npm 配布用ランチャ（`sample-cli` コマンド）
+- `packages/cli-<platform>`: プラットフォーム別バイナリ同梱パッケージ
+- `scripts/place-binary-like-ci.sh`: CI と同じ規約で `vendor/` にバイナリを配置
 
-```sh
-npx create-turbo@latest
+## サポートプラットフォーム
+
+| Node 判定           | Rust target triple          | npm package                      |
+| ------------------- | --------------------------- | -------------------------------- |
+| `darwin/arm64`      | `aarch64-apple-darwin`      | `@taiga-tech/cli-darwin-arm64`   |
+| `darwin/x64`        | `x86_64-apple-darwin`       | `@taiga-tech/cli-darwin-x64`     |
+| `win32/x64`         | `x86_64-pc-windows-msvc`    | `@taiga-tech/cli-win32-x64`      |
+| `linux/x64` + glibc | `x86_64-unknown-linux-gnu`  | `@taiga-tech/cli-linux-x64-gnu`  |
+| `linux/x64` + musl  | `x86_64-unknown-linux-musl` | `@taiga-tech/cli-linux-x64-musl` |
+
+## 要件
+
+- Node.js `>= 24`
+- pnpm `10.30.3`
+- Rust `1.93.1`
+- `mise`（推奨。`mise.toml` のツール定義を利用）
+
+## セットアップ
+
+```bash
+mise install
+pnpm install
 ```
 
-## What's inside?
+`mise` を使わない場合は、必要バージョンの Node/pnpm/Rust を手動で用意してください。
 
-This Turborepo includes the following packages/apps:
+## よく使うコマンド
 
-### Apps and Packages
+```bash
+# JS パッケージ + Rust ワークスペースをビルド
+mise run build
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@taiga-tech/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@taiga-tech/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@taiga-tech/typescript-config`: `tsconfig.json`s used throughout the monorepo
+# JS (Vitest) + Rust テスト
+mise run test
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+# Lint + 型チェック + テスト
+mise run check
 
-### Utilities
+# Prettier + cargo fmt
+mise run format
 
-This Turborepo has some additional tools already setup for you:
+# CI 互換フローでローカル実行（バイナリ配置 -> ランチャービルド -> 実行）
+mise run cli
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+# 任意ターゲット向け CI 互換フロー
+TARGET=x86_64-unknown-linux-musl mise run cli-target
 ```
 
-You can build a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## ローカルで CLI を直接動かす
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
+```bash
+# 1) ホスト向け Rust バイナリをビルドして vendor に配置
+scripts/place-binary-like-ci.sh --build
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
+# 2) ランチャーをビルド
+pnpm --filter @taiga-tech/cli run build
 
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+# 3) ランチャーを実行
+node packages/cli/dist/index.cjs
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters):
+## バイナリ配置規約
 
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+プラットフォーム別パッケージには次のパスでバイナリを格納します。
 
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
+```text
+packages/cli-*/vendor/<target-triple>/sample-cli/sample-cli(.exe)
 ```
 
-### Remote Caching
+この規約は `scripts/place-binary-like-ci.sh` に実装されています。
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+## テスト方針
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+- TypeScript: `packages/cli/src/*.test.ts`（Vitest）
+- Rust: `cargo test --workspace`
+- プラットフォーム判定やバイナリパス解決を変更した場合は、Vitest ケースを追加・更新してください
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
+## リポジトリ構成（抜粋）
 
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.dev/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
+```text
+.
+├── crates/
+│   ├── core/
+│   └── cli/
+├── packages/
+│   ├── cli/
+│   ├── cli-darwin-arm64/
+│   ├── cli-darwin-x64/
+│   ├── cli-win32-x64/
+│   ├── cli-linux-x64-gnu/
+│   └── cli-linux-x64-musl/
+├── scripts/
+│   └── place-binary-like-ci.sh
+└── mise.toml
 ```
 
-## Useful Links
+## 変更管理とリリース
 
-Learn more about the power of Turborepo:
+- コミットメッセージは Conventional Commits（`feat:`, `fix:`, `refactor:` など）
+- 公開挙動やバージョンに影響する変更は `.changeset/` を追加
+- publish 順序は platform package を先、`@taiga-tech/cli` を後
 
-- [Tasks](https://turborepo.dev/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.dev/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.dev/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.dev/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.dev/docs/reference/configuration)
-- [CLI Usage](https://turborepo.dev/docs/reference/command-line-reference)
+## 注意点
+
+- `pnpm add --no-optional` では platform package が入らず実行失敗する可能性があります
+- 未対応 `platform/arch` はランチャーがエラー終了します

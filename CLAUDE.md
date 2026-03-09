@@ -41,14 +41,17 @@ cargo clippy --all-targets --all-features -- -D warnings
 ## アーキテクチャ
 
 **Rust クレート:**
+
 - `crates/core` — コアライブラリ (`sample-cli-core`)
 - `crates/cli` — バイナリエントリポイント、`core` に依存
 
 **npm パッケージ:**
+
 - `packages/cli` — TypeScript ランチャー（プラットフォーム解決・バイナリ起動）
 - `packages/cli-darwin-arm64`, `cli-darwin-x64`, `cli-linux-x64-gnu`, `cli-linux-x64-musl`, `cli-win32-x64` — プラットフォーム別パッケージ。バイナリは `vendor/<target-triple>/sample-cli/` に配置
 
 **補助:**
+
 - `scripts/place-binary-like-ci.sh` — CI と同じ規約でバイナリをローカル配置
 - `apps/web`, `apps/docs` — CLI 実行に不要な Next.js アプリ
 
